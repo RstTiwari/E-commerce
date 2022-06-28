@@ -18,17 +18,22 @@ exports.createProduct = asyncError(async function (req, res, next) {
 
 // get all Product
 exports.getAllProduct = asyncError(
-
     async function (req, res , next) {
 
        const apiFeatures =  new ApiFeature(Product.find(), req.query)
-        let products = await apiFeatures.query;
-
+       .search()
+       .filter()
+        let products = await apiFeatures.query ;
+        
+        const  resultPerPage = 5;
+        apiFeatures.pagination(resultPerPage);
+        products = apiFeatures.query ;
+        
         if (!products) {
             return next( new ErorrHandler("product not Found" ,500))
            }
        
-    
+
         res.status(200).json({
             success: 1,
             data: products
