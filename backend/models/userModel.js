@@ -4,9 +4,8 @@ const bcrypt = require("bcrypt")
 const jwt =  require("jsonwebtoken")
 const crypto = require("crypto")
 const validator = require("validator")
-const { use } = require("../router/userRoute")
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     name:{
         type:String ,
         required: [true, "Please Enter Your Name"],
@@ -51,8 +50,9 @@ const userSchema = new mongoose.Schema({
 
 
 
+// bcryptng the password and saving 
 
-userSchema.pre('save' , async function  (next){
+UserSchema.pre('save' , async function  (next){
     if(!this.isModified("password")){
         next()
     }
@@ -60,14 +60,21 @@ userSchema.pre('save' , async function  (next){
     this.password = await bcrypt.hash(this.password , 10)
 })
 
-// jwtWebToken Method
-userSchema.methods.getJWTToken = function () {   
+// jwtWebToken Method Creation
+UserSchema.methods.getJWTToken = function () {   
     return jwt.sign({id:this._id} , process.env.JWT_SECRET ,{
     expiresIn:process.env.JWT_EXPIRE,
     })
 }
 
+// checking if password matchinng or not
+UserSchema.methods.comparePassword = async function (password){
+   return  await bcrypt.compare(password, this.password)
+   
+
+}
 
 
 
-module.exports = mongoose.model("user" , userSchema)
+
+module.exports = mongoose.model("User" , UserSchema ,"User")
