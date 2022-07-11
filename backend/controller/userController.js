@@ -21,10 +21,7 @@ const  user = await User.create({
 
 const token = user.getJWTToken()
 
-          res.status(200).json({
-            success:1,
-            message:token
-          })
+ sendToken(user , 201 , res)
 })
 
 
@@ -51,14 +48,9 @@ exports.loginUser = async function ( req ,res, next) {
         return next(new ErrorHander("email and pasword does not Match"))    
     }
 
-    
-const token = user.getJWTToken()
 
-          res.status(200).json({
-            success:1,
-            message:"you have logged in succesfuuly",
-            token:token
-          })
+
+   sendToken(user , 200, res)
 }
 
 
@@ -66,7 +58,7 @@ const token = user.getJWTToken()
 // logout a user 
 
 exports.logoutUser = async function(req , res ,next){
-    res.cookies("token" , null ,{
+    res.cookie("token" , null ,{
         expire :new Date(Date.now()),
         httpOnly:true   
     })

@@ -14,7 +14,6 @@ class ApiFeature  {
                 $options : "i",
             }
         } :{}
-        console.log("keyword" , keyword)
 
         this.query = this.query.find({...keyword}) ;
         return this;
@@ -26,14 +25,11 @@ class ApiFeature  {
          const  queryCopy = this.queryStr ;
          const removableItem = ["keyword" , "page" , "limit"]
          removableItem.map(key => delete queryCopy[key]);
-         console.log("querycopy", queryCopy)
 
         //filter for price and rating ;
          let queryStr = JSON.stringify(queryCopy);
          queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
-
          this.query = this.query.find(JSON.parse(queryStr));
-     
          return this;
 
 

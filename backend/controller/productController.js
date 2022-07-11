@@ -1,12 +1,14 @@
 const Product = require("../models/productModel")
 const ErorrHandler = require("../utils/errorHandler");
 const asyncError = require("../middleWare/catchAsyncerror")
-const ApiFeature  = require("../utils/apiFeatures")
+const ApiFeature  = require("../utils/apiFeatures");
+
 
 // create products  only aplicable for --- Admin 
 exports.createProduct = asyncError(async function (req, res, next) {
     let product = await Product.create(req.body);
-    if (!product) {
+    
+    if (!product){
         return next( new ErorrHandler("product not Found" ,500))
        }
    
@@ -16,25 +18,24 @@ exports.createProduct = asyncError(async function (req, res, next) {
     })
 })
 
-// get all Product
+//get all Product
 exports.getAllProduct = asyncError(
     async function (req, res , next) {
 
-       const apiFeatures =  new ApiFeature(Product.find(), req.query)
+       const apiFeatures = new ApiFeature(Product.find(), req.query)
        .search()
        .filter()
+       console.log("req.query" , req.query)
         let products = await apiFeatures.query ;
-        
         const  resultPerPage = 5;
         apiFeatures.pagination(resultPerPage);
-        products = apiFeatures.query ;
+        console.log("products" , products)
         
         if (!products) {
             return next( new ErorrHandler("product not Found" ,500))
            }
-       
 
-        res.status(200).json({
+            res.status(200).json({
             success: 1,
             data: products
         })
@@ -63,7 +64,6 @@ exports.getSingleProduct = asyncError(
 
 // update our products --Admin
 exports.updateProduct = asyncError( async function (req, res, next) {
-    console.log("product", req.body, req.params.id);
     let product = await Product.findById(req.params.id);
 
     if (!product) {
