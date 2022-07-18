@@ -7,7 +7,7 @@ const User = require("../models/userModel");
 
 exports.isUserAuthenticated   = catchAsyncErrors( async function (req, res , next) {
 
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzA5NTBmOGFmNTBlNjUxMTczYTBjZCIsImlhdCI6MTY1NzEzMjMzNiwiZXhwIjoxNjU3NTY0MzM2fQ.Aj3EZS-9HBOmehVMOYcox2RwvitDdEA6p5SoNRfRJMc"
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzA5NTBmOGFmNTBlNjUxMTczYTBjZCIsImlhdCI6MTY1NzY0OTYzMSwiZXhwIjoxNjYwMjQxNjMxfQ.U0tfcSPGf4FNsq1HNmHhaWKAFw6v5cxAUYYQuEYsafE"
 
   if (!token) {
     return next(new ErrorHander("Please Login to access this resource", 401));

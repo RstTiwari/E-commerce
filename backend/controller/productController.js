@@ -6,6 +6,9 @@ const ApiFeature  = require("../utils/apiFeatures");
 
 // create products  only aplicable for --- Admin 
 exports.createProduct = asyncError(async function (req, res, next) {
+
+    req.body.user = req.user.id;
+    
     let product = await Product.create(req.body);
     
     if (!product){
@@ -25,7 +28,6 @@ exports.getAllProduct = asyncError(
        const apiFeatures = new ApiFeature(Product.find(), req.query)
        .search()
        .filter()
-       console.log("req.query" , req.query)
         let products = await apiFeatures.query ;
         const  resultPerPage = 5;
         apiFeatures.pagination(resultPerPage);

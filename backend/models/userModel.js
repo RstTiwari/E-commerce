@@ -71,8 +71,25 @@ UserSchema.methods.getJWTToken = function () {
 UserSchema.methods.comparePassword = async function (password){
    return  await bcrypt.compare(password, this.password)
    
-
 }
+
+
+// Generating Password Reset Token
+UserSchema.methods.getResetPasswordToken = function () {
+  // Generating Token
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  // Hashing and adding resetPasswordToken to userSchema
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+ console.log(resetToken)
+  return resetToken;
+};
+
 
 
 
