@@ -48,8 +48,6 @@ exports.loginUser = async function ( req ,res, next) {
         return next(new ErrorHander("email and pasword does not Match"))    
     }
 
-
-
    sendToken(user , 200, res)
 }
 
@@ -77,9 +75,7 @@ exports.resetPassword = async function( req, res ,next){
     }
 
     const restToken  =  await user.getResetPasswordToken();
-    console.log("rsetToken" ,restToken)
-
-    await user.save({validateBeforeSave:false});
+    await user.save({validateBeforeSave:false});   //not saving because it will hamper the functinality
     
     const urlToReset =`${req.protocol}://${req.get("host")}/passwrod/reset/ ${restToken}`
     const message = `Your password reset token is :- \n\n ${urlToReset} \n\nIf you have not requested this email then, please ignore it.`;
@@ -115,7 +111,7 @@ exports.resetPassword = async function( req, res ,next){
 // finding the user Details
 exports.getUserDetails = async function ( req , res){
 
-    const user = await User.findById(req.userId)
+    const user = await User.findById(req.user.id)
 
     res.status(200).json(
         {
