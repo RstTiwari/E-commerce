@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const sendToken = require("../utils/jwtToken")
 const sendEmail = require("../utils/sendEmail")
 
+
 // regiseter a user 
 exports.registerUser =catchAsyncErrors (async (req, res , next) =>{
 const {name , email , password} = req.body;
@@ -55,7 +56,6 @@ exports.loginUser = async function ( req ,res, next) {
 
 
 // logout a user 
-
 exports.logoutUser = async function(req , res ,next){
     res.cookie("token" , null ,{
         expire :new Date(Date.now()),
@@ -69,7 +69,6 @@ exports.logoutUser = async function(req , res ,next){
 }
 
 // forgot password emai sending
-
 exports.resetPassword = async function( req, res ,next){
     const user =  await User.findOne({email:req.body.email}) ;
 
@@ -85,6 +84,7 @@ exports.resetPassword = async function( req, res ,next){
     const urlToReset =`${req.protocol}://${req.get("host")}/passwrod/reset/ ${restToken}`
     const message = `Your password reset token is :- \n\n ${urlToReset} \n\nIf you have not requested this email then, please ignore it.`;
     console.log("message" , message)
+
 
     //Calling the mail Function for further course of action to take
     try{
@@ -111,3 +111,62 @@ exports.resetPassword = async function( req, res ,next){
     }
 
 }
+
+// finding the user Details
+exports.getUserDetails = async function ( req , res){
+
+    const user = await User.findById(req.userId)
+
+    res.status(200).json(
+        {
+            success:1,
+            message:user
+        }
+    )
+
+}
+
+//updating the passowrd Changes for update passWord EndPoint.
+exports.updatePassword = catchAsyncErrors(async(req, res ,next) =>{
+    const user = await User.findById(req.user.id).select("+password");
+    const isPasswordMatch = await user.comparePassword(req.body.oldPassword);
+
+    if(!isPasswordMatch){
+         return next(new ErrorHander("Old Pasword is Incorrect" , 400));
+    }
+    if(req.body.newPassword != req.body.confirmPasword){
+        return next(new ErrorHander("Confirm password Does not Match with NewPassword"))
+    }
+
+    user.password = newPassword
+    await user.save()
+
+    res.status(200).json({
+        success:1,
+        message: "Password Changed Succefully"
+    })
+
+})
+
+
+// updating the Details of User
+exports.updateUserDetails = catchAsyncErrors(async(req, res, next) =>{
+    const newDetails = {
+        name : req.body.name,
+        email:req.body.email
+    }
+    if(!newDetails){
+        return next(new ErrorHander("Please Enter Details to Update"))
+    }
+    const user = await User.findByIdAndUpdate(req.user.id , newDetails ,{
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    })
+
+    res.status(200).json({
+        success:1,
+        message:user
+    })
+})
+
