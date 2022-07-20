@@ -68,6 +68,7 @@ const orderSchema =  mongoose.Schema({
         id: {
       type: String,
       required: true,
+    
     },
     status: {
       type: String,
